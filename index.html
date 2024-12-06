@@ -12,31 +12,18 @@
     .search-container {
       margin-bottom: 20px;
     }
-    .favorites-container {
-      margin-top: 20px;
-    }
-    .result {
-      margin-top: 10px;
-      font-size: 1.2em;
+    .favorites-container button {
+      margin: 5px; /* 버튼 사이 간격 */
     }
     .favorite-btn {
-      margin-right: 10px;
+      display: inline-block; /* 역 버튼을 개별적으로 배치 */
+      margin-right: 10px; /* 삭제 버튼과 간격 추가 */
+    }
+    .favorites-container {
+      display: flex;
+      flex-direction: column; /* 한 줄에 하나씩 버튼을 나열 */
     }
   </style>
-  .favorites-container button {
-  margin: 5px; /* 버튼 사이 간격 */
-}
-
-.favorite-btn {
-  display: inline-block; /* 역 버튼을 개별적으로 배치 */
-  margin-right: 10px; /* 삭제 버튼과 간격 추가 */
-}
-
-.favorites-container {
-  display: flex;
-  flex-direction: column; /* 한 줄에 하나씩 버튼을 나열 */
-}
-
 </head>
 <body>
   <div class="search-container">
