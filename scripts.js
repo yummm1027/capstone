@@ -1,9 +1,27 @@
-console.log("JavaScript 파일이 잘 연결되었습니다!");
+// 역별, 요일별, 시간별 데이터를 저장하는 객체
+const mockData = {
+  "강남역": {
+    "월요일": { "10:00": "혼잡함", "15:00": "보통", "20:00": "여유있음" },
+    "화요일": { "10:00": "보통", "15:00": "보통", "20:00": "여유있음" }
+  },
+  "서울역": {
+    "월요일": { "10:00": "보통", "15:00": "혼잡함", "20:00": "보통" },
+    "화요일": { "10:00": "여유있음", "15:00": "보통", "20:00": "혼잡함" }
+  }
+};
 
+// 현재 요일과 시간을 가져오는 함수
+function getCurrentDayAndTime() {
+  const now = new Date();
+  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+  const day = days[now.getDay()]; // 오늘의 요일
+  const time = now.getHours().toString().padStart(2, '0') + ":00"; // 현재 시간
+  return { day, time };
+}
+
+// 검색 버튼 클릭 이벤트
 document.getElementById('search-button').addEventListener('click', () => {
-  console.log("검색 버튼이 클릭되었습니다!");
-
-  const stationName = document.getElementById('station-search').value.trim();
+  const stationName = document.getElementById('station-search').value.trim(); // 검색된 역 이름
   console.log(`검색된 역 이름: ${stationName}`);
 
   if (!stationName) {
@@ -11,5 +29,13 @@ document.getElementById('search-button').addEventListener('click', () => {
     return;
   }
 
-  document.getElementById('result').textContent = `${stationName} 검색됨!`;
+  const { day, time } = getCurrentDayAndTime(); // 현재 요일과 시간 가져오기
+
+  if (mockData[stationName]) {
+    const prediction = mockData[stationName][day]?.[time] || "데이터 없음"; // 예측값
+    document.getElementById('result').textContent = 
+      `${stationName} (${day} ${time}) - 예상 상태: ${prediction}`;
+  } else {
+    document.getElementById('result').textContent = "그런 역은 존재하지 않습니다.";
+  }
 });
