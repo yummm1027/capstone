@@ -39,3 +39,56 @@ document.getElementById('search-button').addEventListener('click', () => {
     document.getElementById('result').textContent = "그런 역은 존재하지 않습니다.";
   }
 });
+
+// 즐겨찾기 데이터를 저장할 배열 (최대 3개)
+let favorites = [];
+
+// 즐겨찾기를 업데이트하는 함수
+function updateFavorites() {
+  const favoritesContainer = document.getElementById('favorites-container');
+  favoritesContainer.innerHTML = `<h3>즐겨찾기</h3>`;
+  
+  favorites.forEach((station, index) => {
+    const button = document.createElement('button');
+    button.textContent = station;
+    button.classList.add('favorite-btn');
+    button.addEventListener('click', () => {
+      document.getElementById('station-search').value = station;
+      document.getElementById('search-button').click();
+    });
+    favoritesContainer.appendChild(button);
+
+    // 삭제 버튼 추가
+    const removeButton = document.createElement('button');
+    removeButton.textContent = '❌';
+    removeButton.addEventListener('click', () => {
+      favorites.splice(index, 1); // 즐겨찾기에서 제거
+      updateFavorites(); // UI 업데이트
+    });
+    favoritesContainer.appendChild(removeButton);
+  });
+}
+
+// 즐겨찾기 추가 버튼 클릭 이벤트
+document.getElementById('add-favorite-button').addEventListener('click', () => {
+  const stationName = document.getElementById('station-search').value.trim();
+  
+  if (!stationName) {
+    alert('역 이름을 입력해주세요!');
+    return;
+  }
+
+  if (favorites.includes(stationName)) {
+    alert('이미 즐겨찾기에 추가된 역입니다!');
+    return;
+  }
+
+  if (favorites.length >= 3) {
+    alert('즐겨찾기는 최대 3개까지만 추가할 수 있습니다.');
+    return;
+  }
+
+  favorites.push(stationName); // 즐겨찾기 추가
+  updateFavorites(); // UI 업데이트
+});
+
