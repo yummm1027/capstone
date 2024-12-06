@@ -1,56 +1,25 @@
-// 역별, 요일별, 시간별 데이터를 저장하는 객체
-const mockData = {
-  "강남역": {
-    "월요일": { "10:00": "혼잡함", "15:00": "보통", "20:00": "여유있음" },
-    "화요일": { "10:00": "보통", "15:00": "보통", "20:00": "여유있음" }
-  },
-  "서울역": {
-    "월요일": { "10:00": "보통", "15:00": "혼잡함", "20:00": "보통" },
-    "화요일": { "10:00": "여유있음", "15:00": "보통", "20:00": "혼잡함" }
-  }
-};
+// JSON 데이터 로드
+let jsonData;
 
-// 현재 요일과 시간을 가져오는 함수
-function getCurrentDayAndTime() {
-  const now = new Date();
-  const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-  const day = days[now.getDay()]; // 오늘의 요일
-  const time = now.getHours().toString().padStart(2, '0') + ":00"; // 현재 시간
-  return { day, time };
-}
+fetch('승객_예상_데이터.json')
+  .then(response => response.json())
+  .then(data => {
+    jsonData = data;
+    console.log("JSON 데이터 로드 완료:", jsonData);
+  })
+  .catch(error => console.error("데이터 로드 실패:", error));
 
-// 검색 버튼 클릭 이벤트
-document.getElementById('search-button').addEventListener('click', () => {
-  const stationName = document.getElementById('station-search').value.trim(); // 검색된 역 이름
-  console.log(`검색된 역 이름: ${stationName}`);
-
-  if (!stationName) {
-    document.getElementById('result').textContent = "역 이름을 입력해주세요.";
-    return;
-  }
-
-  const { day, time } = getCurrentDayAndTime(); // 현재 요일과 시간 가져오기
-
-  if (mockData[stationName]) {
-    const prediction = mockData[stationName][day]?.[time] || "데이터 없음"; // 예측값
-    document.getElementById('result').textContent = 
-      `${stationName} (${day} ${time}) - 예상 상태: ${prediction}`;
-  } else {
-    document.getElementById('result').textContent = "그런 역은 존재하지 않습니다.";
-  }
-});
-
-// 즐겨찾기 데이터를 저장할 배열 (최대 3개)
+// 즐겨찾기 데이터
 let favorites = [];
 
-// 즐겨찾기를 업데이트하는 함수
+// 즐겨찾기 업데이트 함수
 function updateFavorites() {
   const favoritesContainer = document.getElementById('favorites-container');
-  favoritesContainer.innerHTML = `<h3>즐겨찾기</h3>`;
-  
+  favoritesContainer.innerHTML = '<h3>즐겨찾기</h3>';
+
   favorites.forEach((station, index) => {
-    const buttonWrapper = document.createElement('div'); // 버튼과 삭제 버튼을 감싸는 div
-    buttonWrapper.style.marginBottom = '10px'; // 버튼 그룹 사이 간격
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.style.marginBottom = '10px';
 
     const button = document.createElement('button');
     button.textContent = station;
@@ -63,38 +32,79 @@ function updateFavorites() {
     const removeButton = document.createElement('button');
     removeButton.textContent = '❌';
     removeButton.addEventListener('click', () => {
-      favorites.splice(index, 1); // 즐겨찾기에서 제거
-      updateFavorites(); // UI 업데이트
+      favorites.splice(index, 1);
+      updateFavorites();
     });
 
-    // 버튼들을 감싸는 div에 추가
     buttonWrapper.appendChild(button);
     buttonWrapper.appendChild(removeButton);
-
-    // 컨테이너에 추가
     favoritesContainer.appendChild(buttonWrapper);
   });
 }
 
-// 즐겨찾기 추가 버튼 클릭 이벤트
+// 즐겨찾기 추가 버튼 이벤트
 document.getElementById('add-favorite-button').addEventListener('click', () => {
   const stationName = document.getElementById('station-search').value.trim();
-  
+
   if (!stationName) {
     alert('역 이름을 입력해주세요!');
     return;
   }
-
   if (favorites.includes(stationName)) {
     alert('이미 즐겨찾기에 추가된 역입니다!');
     return;
   }
-
   if (favorites.length >= 3) {
     alert('즐겨찾기는 최대 3개까지만 추가할 수 있습니다.');
     return;
   }
 
-  favorites.push(stationName); // 즐겨찾기 추가
-  updateFavorites(); // UI 업데이트
+  favorites.push(stationName);
+  updateFavorites();
+});
+
+// 검색 버튼 클릭 이벤트
+document.getElementById('search-button').addEventListener('click', () => {
+  const stationName = document.getElementById('station-search').value.trim();
+  const day = document.getElementById('day').value.trim();
+  const hour = document.getElementById('hour').value.trim();
+
+  if (!stationName || !day || !hour) {
+    document.getElementById('result').textContent = "역 이름, 요일, 시간대를 모두 입력해주세요.";
+    return;
+  }
+
+  if (!jsonData) {
+    document.getElementById('result').textContent = "데이터가 아직 로드되지 않았습니다.";
+    return;
+  }
+
+  const results = jsonData.filter(item =>
+    item.역명 === stationName && item.요일 === day
+  );
+
+  if (results.length === 0) {
+    document.getElementById('result').textContent = "해당 조건에 맞는 데이터가 없습니다.";
+    return;
+  }
+
+  const output = results.map(item => ({
+    유형: item.승객유형,
+    인원수: item[hour] || "데이터 없음"
+  }));
+
+  let resultHtml = `<strong>${stationName}</strong> (${day}, ${hour}):<br>`;
+  output.forEach(item => {
+    resultHtml += `- ${item.유형}: ${item.인원수}<br>`;
+  });
+  document.getElementById('result').innerHTML = resultHtml;
+
+  // 맞춤형 광고 표시
+  const highestType = output.reduce((a, b) => (a.인원수 > b.인원수 ? a : b), {}).유형;
+  const ads = {
+    일반: "일반인을 위한 지하철 안전 캠페인 광고",
+    어린이: "어린이를 위한 지하철 예절 광고",
+    청소년: "청소년을 위한 특별 프로모션 광고"
+  };
+  document.getElementById('ad-content').textContent = ads[highestType] || "광고 데이터가 없습니다.";
 });
