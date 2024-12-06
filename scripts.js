@@ -47,7 +47,7 @@ let favorites = [];
 function updateFavorites() {
   const favoritesContainer = document.getElementById('favorites-container');
   favoritesContainer.innerHTML = `<h3>즐겨찾기</h3>`;
-
+  
   favorites.forEach((station, index) => {
     const buttonWrapper = document.createElement('div'); // 버튼과 삭제 버튼을 감싸는 div
     buttonWrapper.style.marginBottom = '10px'; // 버튼 그룹 사이 간격
@@ -76,7 +76,6 @@ function updateFavorites() {
   });
 }
 
-
 // 즐겨찾기 추가 버튼 클릭 이벤트
 document.getElementById('add-favorite-button').addEventListener('click', () => {
   const stationName = document.getElementById('station-search').value.trim();
@@ -99,4 +98,3 @@ document.getElementById('add-favorite-button').addEventListener('click', () => {
   favorites.push(stationName); // 즐겨찾기 추가
   updateFavorites(); // UI 업데이트
 });
-
