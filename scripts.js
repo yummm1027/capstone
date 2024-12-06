@@ -47,8 +47,11 @@ let favorites = [];
 function updateFavorites() {
   const favoritesContainer = document.getElementById('favorites-container');
   favoritesContainer.innerHTML = `<h3>즐겨찾기</h3>`;
-  
+
   favorites.forEach((station, index) => {
+    const buttonWrapper = document.createElement('div'); // 버튼과 삭제 버튼을 감싸는 div
+    buttonWrapper.style.marginBottom = '10px'; // 버튼 그룹 사이 간격
+
     const button = document.createElement('button');
     button.textContent = station;
     button.classList.add('favorite-btn');
@@ -56,18 +59,23 @@ function updateFavorites() {
       document.getElementById('station-search').value = station;
       document.getElementById('search-button').click();
     });
-    favoritesContainer.appendChild(button);
 
-    // 삭제 버튼 추가
     const removeButton = document.createElement('button');
     removeButton.textContent = '❌';
     removeButton.addEventListener('click', () => {
       favorites.splice(index, 1); // 즐겨찾기에서 제거
       updateFavorites(); // UI 업데이트
     });
-    favoritesContainer.appendChild(removeButton);
+
+    // 버튼들을 감싸는 div에 추가
+    buttonWrapper.appendChild(button);
+    buttonWrapper.appendChild(removeButton);
+
+    // 컨테이너에 추가
+    favoritesContainer.appendChild(buttonWrapper);
   });
 }
+
 
 // 즐겨찾기 추가 버튼 클릭 이벤트
 document.getElementById('add-favorite-button').addEventListener('click', () => {
