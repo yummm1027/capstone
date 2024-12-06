@@ -1,32 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>지하철 역 검색</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    .search-container {
-      margin-bottom: 20px;
-    }
-    .result {
-      margin-top: 10px;
-      font-size: 1.2em;
-    }
-  </style>
-</head>
-<body>
-  <div class="search-container">
-    <label for="station-search">역 이름 검색:</label>
-    <input type="text" id="station-search" placeholder="예: 강남역">
-    <button id="search-button">검색</button>
-  </div>
-  <div class="result" id="result"></div>
+console.log("JavaScript 파일이 잘 연결되었습니다!");
 
-  <!-- JavaScript 파일 경로 수정 -->
-  <script src="scripts.js"></script>
-</body>
-</html>
+document.getElementById('search-button').addEventListener('click', () => {
+  console.log("검색 버튼이 클릭되었습니다!");
+
+  const stationName = document.getElementById('station-search').value.trim();
+  console.log(`검색된 역 이름: ${stationName}`);
+
+  if (!stationName) {
+    document.getElementById('result').textContent = "역 이름을 입력해주세요.";
+    return;
+  }
+
+  document.getElementById('result').textContent = `${stationName} 검색됨!`;
+});
