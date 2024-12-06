@@ -1,13 +1,18 @@
 // JSON 데이터 로드
 let jsonData;
 
-fetch('승객_예상_데이터.json')
-  .then(response => response.json())
+fetch('./승객_예상_데이터.json')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+  })
   .then(data => {
     jsonData = data;
-    console.log("JSON 데이터 로드 완료:", jsonData);
+    console.log("JSON 데이터 로드 성공:", jsonData);
   })
-  .catch(error => console.error("데이터 로드 실패:", error));
+  .catch(error => console.error("JSON 데이터 로드 실패:", error));
 
 // 현재 요일과 시간대 계산 함수
 function getCurrentDayAndTimeSlot() {
@@ -29,7 +34,7 @@ document.getElementById('search-button').addEventListener('click', () => {
   }
 
   if (!jsonData) {
-    document.getElementById('result').textContent = "데이터가 아직 로드되지 않았습니다.";
+    document.getElementById('result').textContent = "JSON 데이터가 아직 로드되지 않았습니다.";
     return;
   }
 
