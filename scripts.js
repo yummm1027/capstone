@@ -18,11 +18,64 @@ fetch('./승객_예상_데이터.json')
 function getCurrentDayAndTimeSlot() {
   const now = new Date();
   const days = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-  const day = days[now.getDay()]; // 현재 요일
-  const hour = now.getHours(); // 현재 시간
+  const day = days[now.getDay()];
+  const hour = now.getHours();
   const timeSlot = `${hour.toString().padStart(2, '0')}-${(hour + 1).toString().padStart(2, '0')}시간대`;
   return { day, timeSlot };
 }
+
+// 즐겨찾기 데이터
+let favorites = [];
+
+// 즐겨찾기 업데이트 함수
+function updateFavorites() {
+  const favoritesContainer = document.getElementById('favorites-container');
+  favoritesContainer.innerHTML = '<h3>즐겨찾기</h3>';
+
+  favorites.forEach((station, index) => {
+    const buttonWrapper = document.createElement('div');
+    buttonWrapper.style.marginBottom = '10px';
+
+    const button = document.createElement('button');
+    button.textContent = station;
+    button.addEventListener('click', () => {
+      document.getElementById('station-search').value = station;
+      document.getElementById('search-button').click();
+    });
+
+    const removeButton = document.createElement('button');
+    removeButton.textContent = '❌';
+    removeButton.addEventListener('click', () => {
+      favorites.splice(index, 1);
+      updateFavorites();
+    });
+
+    buttonWrapper.appendChild(button);
+    buttonWrapper.appendChild(removeButton);
+    favoritesContainer.appendChild(buttonWrapper);
+  });
+}
+
+// 즐겨찾기 추가 버튼 이벤트
+document.getElementById('add-favorite-button').addEventListener('click', () => {
+  const stationName = document.getElementById('station-search').value.trim();
+
+  if (!stationName) {
+    alert('역 이름을 입력해주세요!');
+    return;
+  }
+  if (favorites.includes(stationName)) {
+    alert('이미 즐겨찾기에 추가된 역입니다!');
+    return;
+  }
+  if (favorites.length >= 3) {
+    alert('즐겨찾기는 최대 3개까지만 추가할 수 있습니다.');
+    return;
+  }
+
+  favorites.push(stationName);
+  updateFavorites();
+});
 
 // 검색 버튼 클릭 이벤트
 document.getElementById('search-button').addEventListener('click', () => {
@@ -67,7 +120,7 @@ document.getElementById('search-button').addEventListener('click', () => {
   // 맞춤형 광고 표시
   const highestType = output.reduce((a, b) => {
     if (a && b) return a.인원수 > b.인원수 ? a : b;
-    return b; // 첫 번째 비교가 undefined인 경우
+    return b;
   }, null)?.유형;
 
   const ads = {
