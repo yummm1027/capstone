@@ -12,18 +12,27 @@
     .search-container {
       margin-bottom: 20px;
     }
+    .favorites-container button {
+      margin: 5px;
+    }
     .result {
       margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>지하철 정보 검색 및 맞춤형 광고</h1>
+  <h1>지하철 정보 검색 및 즐겨찾기</h1>
 
   <div class="search-container">
     <label for="station-search">역 이름 검색:</label>
     <input type="text" id="station-search" placeholder="예: 강남역">
     <button id="search-button">검색</button>
+    <button id="add-favorite-button">즐겨찾기에 추가</button>
+  </div>
+
+  <div class="favorites-container" id="favorites-container">
+    <h3>즐겨찾기</h3>
+    <p>즐겨찾은 역이 여기에 표시됩니다.</p>
   </div>
 
   <div class="result">
